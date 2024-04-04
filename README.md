@@ -1,66 +1,41 @@
-# Using Logic App to Automate Azure DevOps Multistage Pipelines 
+Automation of Azure DevOps Pipelines via Logic App
+This repository is designed to demonstrate a practical implementation of automating Azure DevOps Pipelines using a Logic App, following the guidelines set by the architecture example provided by Azure. It includes an ARM template for setting up a Logic App which serves as a mediator to streamline the creation and management of Azure DevOps Multi Stage Pipelines.
 
-This repository explains the deployment scenario of the [reference architecture](https://docs.microsoft.com/en-us/azure/architecture/example-scenario/devops/automate-azure-pipelines) published in azure architecture center. It contains an Azure Resource Group Project that provisions an Azure Logic App. The Logic App interacts with Azure DevOps API to automate the provisioning of Multi Stage Pipelines
+Within this source code, you'll find:
 
-The source code contains the following files
+LogicApp.json: The ARM template for initializing the Logic App.
+LogicApp.parameters.json: A parameters file that provides inputs to the ARM template for the Logic App setup.
+Please ensure to customize the parameter values to fit your Azure DevOps organization, including your project details and Personal Access Token (PAT).
 
-- **LogicApp.json** - ARM template that provisions the logic app
-- **LogicApp.parameters.json** - Parameter file that is passed as inputs to ARM template to provision the Logic App
+Note: After the development phase, it's crucial to secure your ARM template secrets, ideally by storing them in Azure Key Vault as securestring.
 
->Replace the parameters with relevant values for azure devops organization, project and the PAT token.
+Pre-requisites for Deployment
+To effectively deploy and utilize this project, ensure you have:
 
->After Development phase, be sure to save ARM template secrets as securestring. Most importantly fetch those secret from azure keyvault
+An Azure Subscription with available credits.
+An Azure DevOps Account with administrative access to a project.
+A current Azure DevOps Project in use.
+A Personal Access Token (PAT) from Azure DevOps, which can be generated as described here.
+The latest version of Visual Studio, preferably 2022 or newer.
+Steps for Deploying Azure Resources
+The deployment can be performed either via Visual Studio or Azure Cloud Shell. The process for deploying through Visual Studio can be found here.
 
-## Prerequisites
+Alternatively, deployment scripts can be executed in Azure Cloud Shell after cloning this repository, navigating to the specific project directory, and ensuring the template and parameter files are available in your Cloud Shell environment.
 
-You need the following pre-requisites to deploy the project
+Deploy using the following Azure CLI commands:
 
-- An Azure Subscription with some credits
-- An Azure DevOps Account with project administrator role
-- An active Azure DevOps Project
-- [PAT token](https://docs.microsoft.com/en-us/azure/devops/organizations/accounts/use-personal-access-tokens-to-authenticate?view=azure-devops&tabs=preview-page#create-a-pat) from Azure DevOps
-- Visual Studio 2022 or latest
+shell
+Copy code
+az group create --name azdevops-multistage-pipelines --location "West Europe"
+az deployment group create --resource-group azdevops-multistage-pipelines --template-file LogicApp.json --parameters LogicApp.parameters.json
+For additional information on parameter file usage for ARM templates, refer to this Microsoft guide.
 
-## Deploy Azure Resources
+Integrating Logic App with Azure DevOps as a Service Hook
+After the Logic App deployment:
 
-You can choose to deploy this project from *Visual Studio* or using *Azure Cloud Shell*
-The steps below show how to deploy ARM template from within Visual Studio
+Record the trigger URL from the provisioned Logic App.
+Access the Project Settings in Azure DevOps and navigate to service hooks.
+Set up a webhook for the Code Pushed event to link to the HTTP Trigger URL of the Logic App.
+Subsequently, any code push within the specified Azure DevOps project will activate the Logic App, which then utilizes Azure DevOps APIs to set up the Multi Stage Pipelines as defined by the YAML file in the root of each repository.
 
- - [Creating and deploying Azure resource groups through Visual Studio](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/create-visual-studio-deployment-project)
-  
-Alternatively, you can also choose to run the deployment script, from within [Azure Cloud Shell](https://shell.azure.com), clone this repository to your local machine, switch to the `multistage-azure-pipeline-automation-logicapp` folder and upload the template & paramter json files to clouddrive
-
-![Azure Cloud Shell](screenshots/azure-cloud-shell.png)
-
-Now run the following commands :
-
-```shell
-az group create \
-  --name azdevops-multistage-pipelines \
-  --location "West Europe"
-az deployment group create \
-  --name prodenvironment \
-  --resource-group azdevops-multistage-pipelines \
-  --template-file LogicApp.json \
-  --parameters LogicApp.parameters.json
-```
-
-****
-
->Read more about how to use parameter files to deploy your ARM template [here](https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/template-tutorial-use-parameter-file?tabs=azure-cli#deploy-template)
-
-## Adding LogicApp as Service Hook to Azure DevOps project
-
-- Once the Logic App is provisioned, copy the trigger URL
-- Go to Project Settings in Azure Devops and select service hooks
-- On [Code Pushed](https://docs.microsoft.com/en-us/azure/devops/service-hooks/events?view=azure-devops#git.push) event, configure the webhook to call the HTTP Trigger URL of the Logic App you previously copied
-
-Now for every codepush event detected across any repository within that azure devops project the logic app will invoke the azure devops api to configure the multistage pipelines based on the pipeline definition yaml file located in the root of the repository
-
-This way you have a repeatable deployment pattern across all your repsositories within the azure devops project
-
-![Service Hooks](screenshots/servicehooks-azuredevops.png)
-
->Now your setup will correspond to the representation of the following architecture
-
-![Architecture](screenshots/automating_multistage_azure_pipelines.png)
+This setup fosters a consistent and automated deployment mechanism throughout your Azure DevOps project repositories.
