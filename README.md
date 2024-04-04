@@ -1,4 +1,5 @@
-Automation of Azure DevOps Pipelines via Logic App
+**Automation of Azure DevOps Pipelines via Logic App**
+
 This repository is designed to demonstrate a practical implementation of automating Azure DevOps Pipelines using a Logic App, following the guidelines set by the architecture example provided by Azure. It includes an ARM template for setting up a Logic App which serves as a mediator to streamline the creation and management of Azure DevOps Multi Stage Pipelines.
 
 Within this source code, you'll find:
@@ -9,7 +10,7 @@ Please ensure to customize the parameter values to fit your Azure DevOps organiz
 
 Note: After the development phase, it's crucial to secure your ARM template secrets, ideally by storing them in Azure Key Vault as securestring.
 
-Pre-requisites for Deployment
+**Pre-requisites for Deployment**
 To effectively deploy and utilize this project, ensure you have:
 
 An Azure Subscription with available credits.
@@ -22,7 +23,7 @@ The deployment can be performed either via Visual Studio or Azure Cloud Shell. T
 
 Alternatively, deployment scripts can be executed in Azure Cloud Shell after cloning this repository, navigating to the specific project directory, and ensuring the template and parameter files are available in your Cloud Shell environment.
 
-Deploy using the following Azure CLI commands:
+**Deploy using the following Azure CLI commands:**
 
 shell
 Copy code
@@ -31,7 +32,7 @@ az deployment group create --resource-group azdevops-multistage-pipelines --temp
 For additional information on parameter file usage for ARM templates, refer to this Microsoft guide.
 
 Integrating Logic App with Azure DevOps as a Service Hook
-After the Logic App deployment:
+**After the Logic App deployment:**
 
 Record the trigger URL from the provisioned Logic App.
 Access the Project Settings in Azure DevOps and navigate to service hooks.
